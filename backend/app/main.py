@@ -19,9 +19,9 @@ from app.cal import (
 )
 
 import httpx
-from fastapi import FastAPI, HTTPException
-
-
+from fastapi import FastAPI, HTTPException,  Query
+from app.cal import get_schedules_from_cal
+from app.cal import get_slots_by_event_type
 load_dotenv()
 
 app = FastAPI()
@@ -40,7 +40,8 @@ CAL_VERIFY_URL = (
 # -------------------------
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -140,8 +141,6 @@ def cancel_booking(booking_uid: str):
 # ✅ RESCHEDULE (FIXED WITH PYDANTIC)
 # =========================================================
 
-
-
 @app.post("/reschedule-booking/{booking_uid}")
 def reschedule_booking(
     booking_uid: str,
@@ -158,6 +157,7 @@ def reschedule_booking(
         "rescheduled": True,
         "cal_response": cal_response,
     }
+
 
 
 @app.post("/request-email-verification")
@@ -207,3 +207,37 @@ async def verify_email_code(payload: EmailVerificationRequest):
         )
 
     return response.json()
+
+
+@app.get("/schedules")
+def get_schedules():
+    try:
+        return get_schedules_from_cal()
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=str(e),
+        )
+
+
+
+
+@app.get("/slots")
+def get_slots(
+    eventTypeId: int = Query(...),
+    start: str = Query(...),
+    end: str = Query(...),
+    timeZone: str = Query(...),
+):
+    try:
+        return get_slots_by_event_type(
+            event_type_id=eventTypeId,
+            start=start,
+            end=end,
+            time_zone=timeZone,
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=str(e),
+        )
