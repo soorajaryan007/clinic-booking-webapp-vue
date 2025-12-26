@@ -61,7 +61,7 @@ No Python, Node.js, pip, or npm required on your machine.
 
 ---
 
-## **1️⃣ Prerequisites**
+### **1️⃣ Prerequisites**
 
 Ensure Docker is installed:
 
@@ -72,7 +72,7 @@ docker compose version
 
 ---
 
-## **2️⃣ Add `.env` inside the backend folder**
+### **2️⃣ Add `.env` inside the backend folder**
 
 Create the file:
 
@@ -90,7 +90,7 @@ CAL_API_KEY=cal_live_xxxxxxxxxxxxxxxxxxxx
 
 ---
 
-## **3️⃣ Start the full system**
+### **3️⃣ Start the full system**
 
 From the project root:
 
@@ -107,7 +107,7 @@ Docker will:
 
 ---
 
-## **4️⃣ Access the Application**
+### **4️⃣ Access the Application**
 
 | Service            | URL                                                      |
 | ------------------ | -------------------------------------------------------- |
@@ -117,7 +117,7 @@ Docker will:
 
 ---
 
-## **5️⃣ Stop containers**
+### **5️⃣ Stop containers**
 
 ```bash
 docker compose down
@@ -125,7 +125,7 @@ docker compose down
 
 ---
 
-## **6️⃣ Rebuild cleanly**
+### **6️⃣ Rebuild cleanly**
 
 ```bash
 docker compose build --no-cache
@@ -140,15 +140,15 @@ If not using Docker, you can run frontend and backend separately.
 
 ---
 
-## 🔧 **Backend Setup (FastAPI)**
+### 🔧 **Backend Setup (FastAPI)**
 
-## **1️⃣ Navigate to backend**
+### **1️⃣ Navigate to backend**
 
 ```bash
 cd backend
 ```
 
-## **2️⃣ Create virtual environment**
+### **2️⃣ Create virtual environment**
 
 ```bash
 python3 -m venv venv
@@ -156,19 +156,19 @@ source venv/bin/activate   # Linux/Mac
 venv\Scripts\activate      # Windows
 ```
 
-## **3️⃣ Install dependencies**
+### **3️⃣ Install dependencies**
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## **4️⃣ Create `.env`**
+### **4️⃣ Create `.env`**
 
 ```
 CAL_API_KEY=cal_live_xxxxxxxxx
 ```
 
-## **5️⃣ Run the server**
+### **5️⃣ Run the server**
 
 ```bash
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
@@ -185,13 +185,13 @@ http://localhost:8000/docs
 
 ## 🖥️ **Frontend Setup (React + Vite)**
 
-## **1️⃣ Navigate to frontend**
+### **1️⃣ Navigate to frontend**
 
 ```bash
 cd frontend
 ```
 
-## **2️⃣ Install node dependencies**
+### **2️⃣ Install node dependencies**
 
 > ⚠️ Vite requires **Node.js 20+**
 
@@ -199,7 +199,7 @@ cd frontend
 npm install
 ```
 
-## **3️⃣ Run the dev server**
+### **3️⃣ Run the dev server**
 
 ```bash
 npm run dev
@@ -247,7 +247,7 @@ CAL_API_KEY=cal_live_xxxxxxx
 
 ---
 
-# 🧪 **Testing**
+## 🧪 **Testing**
 
 Check backend logs:
 
