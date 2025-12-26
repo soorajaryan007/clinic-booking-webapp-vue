@@ -6,3 +6,15 @@ class BookingRequest(BaseModel):
     end: str
     name: str
     email: EmailStr
+
+
+class EmailRequest(BaseModel):
+    email: str
+
+class EmailVerificationRequest(BaseModel):
+    email: str
+    code: str
+
+class RescheduleRequest(BaseModel):
+    start: str
+    reschedulingReason: str = "User requested reschedule"

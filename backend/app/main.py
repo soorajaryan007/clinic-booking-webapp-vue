@@ -1,12 +1,14 @@
-from fastapi import FastAPI
+import os
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from datetime import datetime
 from zoneinfo import ZoneInfo
-
-from pydantic import BaseModel   # ✅ NEW
-
-from app.models import BookingRequest
+from app.models import ( 
+    BookingRequest, 
+    EmailVerificationRequest,
+    EmailRequest,
+    RescheduleRequest,  
+)
 from app.slot_engine import generate_slots
 from app.database import get_connection
 from app.cal import (
@@ -16,9 +18,22 @@ from app.cal import (
     reschedule_booking_on_cal,   # ✅ make sure this exists
 )
 
+import httpx
+from fastapi import FastAPI, HTTPException
+
+
 load_dotenv()
 
-app = FastAPI(title="Clinic Booking API")
+app = FastAPI()
+
+CAL_API_KEY = os.getenv("CAL_API_KEY")
+
+CAL_REQUEST_URL = (
+    "https://api.cal.com/v2/verified-resources/emails/verification-code/request"
+)
+CAL_VERIFY_URL = (
+    "https://api.cal.com/v2/verified-resources/emails/verification-code/verify"
+)
 
 # -------------------------
 # CORS
@@ -125,9 +140,7 @@ def cancel_booking(booking_uid: str):
 # ✅ RESCHEDULE (FIXED WITH PYDANTIC)
 # =========================================================
 
-class RescheduleRequest(BaseModel):
-    start: str
-    reschedulingReason: str = "User requested reschedule"
+
 
 @app.post("/reschedule-booking/{booking_uid}")
 def reschedule_booking(
@@ -145,3 +158,52 @@ def reschedule_booking(
         "rescheduled": True,
         "cal_response": cal_response,
     }
+
+
+@app.post("/request-email-verification")
+async def request_email_verification(payload: EmailRequest):
+    if not CAL_API_KEY:
+        raise HTTPException(status_code=500, detail="Cal API key not configured")
+
+    headers = {
+        "Authorization": f"Bearer {CAL_API_KEY}",
+        "Content-Type": "application/json",
+    }
+
+    async with httpx.AsyncClient(timeout=10) as client:
+        response = await client.post(
+            CAL_REQUEST_URL,
+            headers=headers,
+            json={"email": payload.email},
+        )
+
+    if response.status_code != 200:
+        raise HTTPException(
+            status_code=response.status_code,
+            detail=response.json(),
+        )
+
+    return response.json()
+
+
+@app.post("/verify-email-code")
+async def verify_email_code(payload: EmailVerificationRequest):
+    headers = {
+        "Authorization": f"Bearer {CAL_API_KEY}",
+        "Content-Type": "application/json",
+    }
+
+    async with httpx.AsyncClient(timeout=10) as client:
+        response = await client.post(
+            CAL_VERIFY_URL,
+            headers=headers,
+            json=payload.dict(),
+        )
+
+    if response.status_code != 200:
+        raise HTTPException(
+            status_code=response.status_code,
+            detail=response.json(),
+        )
+
+    return response.json()

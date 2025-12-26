@@ -2,6 +2,15 @@
   <!-- ❌ No result -->
   <div v-if="!result"></div>
 
+  <!-- 🚫 Cancelled UI (HIGHEST PRIORITY) -->
+  <div
+    v-else-if="cancelled"
+    class="booking-result cancelled"
+  >
+    <h3>Booking Cancelled ❌</h3>
+    <p>Your appointment has been cancelled.</p>
+  </div>
+
   <!-- ❌ Booking failed -->
   <div
     v-else-if="result.status !== 'success'"
@@ -25,15 +34,6 @@
     >
       Please select a different date or try again later.
     </p>
-  </div>
-
-  <!-- 🚫 Cancelled UI -->
-  <div
-    v-else-if="cancelled"
-    class="booking-result cancelled"
-  >
-    <h3>Booking Cancelled ❌</h3>
-    <p>Your appointment has been cancelled.</p>
   </div>
 
   <!-- ✅ Success UI -->
@@ -84,7 +84,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount } from "vue";
+import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
 import { cancelBookingAPI } from "../api/api";
 import RescheduleBooking from "./RescheduleBooking.vue";
 
@@ -125,17 +125,32 @@ const loading = ref(false);
 let timer = null;
 
 /* ⏱ Countdown timer */
-onMounted(() => {
+const startTimer = () => {
+  clearInterval(timer);
+  secondsLeft.value = 30;
+
   timer = setInterval(() => {
     if (secondsLeft.value > 0) {
       secondsLeft.value--;
     }
   }, 1000);
-});
+};
+
+onMounted(startTimer);
 
 onBeforeUnmount(() => {
   clearInterval(timer);
 });
+
+/* 🔄 Reset when new booking result arrives */
+watch(
+  () => props.result,
+  () => {
+    cancelled.value = false;
+    loading.value = false;
+    startTimer();
+  }
+);
 
 /* ❌ Cancel booking */
 const handleCancel = async () => {
@@ -145,6 +160,7 @@ const handleCancel = async () => {
   try {
     await cancelBookingAPI(bookingUid.value);
     cancelled.value = true;
+    clearInterval(timer); // ✅ stop timer
   } catch (err) {
     alert("Failed to cancel booking");
   } finally {
