@@ -1,8 +1,8 @@
 import os
 import requests
 from dotenv import load_dotenv
-
 load_dotenv()
+
 
 CAL_API_KEY = os.getenv("CAL_API_KEY")
 BASE_URL = "https://api.cal.com/v2"
@@ -80,30 +80,76 @@ def cancel_booking_on_cal(booking_uid: str):
 
 
 
-def reschedule_booking_on_cal(booking_uid: str, start: str, reason: str):
-    url = f"{BASE_URL}/bookings/{booking_uid}/reschedule"
+# app/cal.py
+
+def reschedule_booking_on_cal(
+    booking_uid: str,
+    start: str,
+    reason: str | None = None,
+):
+    url = f"{BASE_URL}/bookings/{booking_uid}"
 
     headers = {
         "Authorization": f"Bearer {CAL_API_KEY}",
         "Content-Type": "application/json",
-        "cal-api-version": "2024-08-13",
+        "cal-api-version": "2024-06-11",
     }
 
     payload = {
-        "start": start,  # MUST be ISO 8601
-        "reschedulingReason": reason,
-        "rescheduledBy": "patient",  # optional but nice
+        "start": start,
     }
 
-    response = requests.post(
-        url,
-        headers=headers,
-        json=payload,
-        timeout=10
-    )
+    if reason:
+        payload["reschedulingReason"] = reason
 
-    if response.status_code != 200:
-        print("Cal reschedule error:", response.status_code, response.text)
+    response = requests.patch(url, json=payload, headers=headers)
 
-    response.raise_for_status()
+    if response.status_code >= 400:
+        raise Exception(response.text)
+
+    return response.json()
+
+
+
+def get_schedules_from_cal():
+    url = f"{BASE_URL}/schedules"
+
+    headers = {
+        "Authorization": f"Bearer {CAL_API_KEY}",
+        "cal-api-version": "2024-06-11",
+    }
+
+    response = requests.get(url, headers=headers)
+
+    if response.status_code >= 400:
+        raise Exception(response.text)
+
+    return response.json()
+
+
+def get_slots_by_event_type(
+    event_type_id: int,
+    start: str,
+    end: str,
+    time_zone: str,
+):
+    url = f"{BASE_URL}/slots"
+
+    params = {
+        "eventTypeId": event_type_id,
+        "start": start,
+        "end": end,
+        "timeZone": time_zone,
+    }
+
+    headers = {
+        "Authorization": f"Bearer {CAL_API_KEY}",
+        "cal-api-version": "2024-06-11",
+    }
+
+    response = requests.get(url, params=params, headers=headers)
+
+    if response.status_code >= 400:
+        raise Exception(response.text)
+
     return response.json()
