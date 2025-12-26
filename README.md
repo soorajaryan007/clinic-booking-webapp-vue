@@ -54,7 +54,7 @@ calbookingwebapp/
 
 ---
 
-# 🐳 **1. Run the Entire App with Docker (Recommended)**
+## 🐳 **1. Run the Entire App with Docker (Recommended)**
 
 Running the stack via Docker is the easiest and fastest method.
 No Python, Node.js, pip, or npm required on your machine.
@@ -134,13 +134,13 @@ docker compose up
 
 ---
 
-# ⚙️ **2. Manual Local Setup (Optional)**
+## ⚙️ **2. Manual Local Setup (Optional)**
 
 If not using Docker, you can run frontend and backend separately.
 
 ---
 
-# 🔧 **Backend Setup (FastAPI)**
+## 🔧 **Backend Setup (FastAPI)**
 
 ## **1️⃣ Navigate to backend**
 
@@ -183,7 +183,7 @@ http://localhost:8000/docs
 
 ---
 
-# 🖥️ **Frontend Setup (React + Vite)**
+## 🖥️ **Frontend Setup (React + Vite)**
 
 ## **1️⃣ Navigate to frontend**
 
@@ -213,7 +213,7 @@ http://localhost:5173
 
 ---
 
-# 🔑 **Cal.com API Setup**
+## 🔑 **Cal.com API Setup**
 
 1. Open: [https://app.cal.com/settings/developer](https://app.cal.com/settings/developer)
 2. Create a **Personal Access Token**
@@ -233,7 +233,7 @@ CAL_API_KEY=cal_live_xxxxxxx
 
 ---
 
-# 🔄 **Booking Workflow**
+## 🔄 **Booking Workflow**
 
 1. React loads event types from backend
 2. User selects event + date
@@ -263,7 +263,7 @@ uvicorn app.main:app --reload
 
 ---
 
-# 📁 **.gitignore**
+## 📁 **.gitignore**
 
 Included to prevent leaking sensitive data:
 
