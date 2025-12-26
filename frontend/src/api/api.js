@@ -7,23 +7,45 @@ const API = axios.create({
   },
 });
 
-// -------- GET APIs --------
-export const getEventTypes = () => API.get("/event-types");
+// =======================
+// GET APIs
+// =======================
 
-export const getAvailability = (params) =>
-  API.get("/availability", { params });
+export const getEventTypes = () =>
+  API.get("/event-types");
 
-// -------- BOOKING APIs --------
+/**
+ * Canonical slot fetch
+ * Frontend sends ONLY:
+ * - eventTypeId
+ * - date (YYYY-MM-DD)
+ */
+export const getSlots = ({ eventTypeId, date, bookingUidToReschedule }) =>
+  API.get("/slots", {
+    params: {
+      eventTypeId,
+      date,
+      bookingUidToReschedule,
+    },
+  });
+
+// =======================
+// BOOKING APIs
+// =======================
+
 export const bookSlotAPI = (payload) =>
   API.post("/book", payload);
 
 export const cancelBookingAPI = (bookingUid) =>
   API.delete(`/cancel-booking/${bookingUid}`);
 
-export const rescheduleBookingAPI = (uid, payload) =>
-  API.post(`/reschedule-booking/${uid}`, payload);
+export const rescheduleBookingAPI = (bookingUid, payload) =>
+  API.post(`/reschedule-booking/${bookingUid}`, payload);
 
-// -------- EMAIL VERIFICATION APIs --------
+// =======================
+// EMAIL VERIFICATION APIs
+// =======================
+
 export const requestEmailVerification = (email) =>
   API.post("/request-email-verification", { email });
 
