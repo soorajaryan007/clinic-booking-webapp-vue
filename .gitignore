@@ -1,6 +1,3 @@
-# -------------------------
-# Python / FastAPI backend
-# -------------------------
 
 # Virtual environment
 venv/
@@ -72,3 +69,8 @@ Desktop.ini
 # JetBrains editors
 .idea/
 *.iml
+# -------------------------
+# Vue / Vite frontend
+frontend-vue/.vite/
+node_modules/
+dist/
