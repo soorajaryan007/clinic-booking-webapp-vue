@@ -9,12 +9,13 @@ class BookingRequest(BaseModel):
 
 
 class EmailRequest(BaseModel):
-    email: str
+    email: EmailStr
+
 
 class EmailVerificationRequest(BaseModel):
-    email: str
+    email: EmailStr
     code: str
 
 class RescheduleRequest(BaseModel):
     start: str
-    reschedulingReason: str = "User requested reschedule"
+    reschedulingReason: str | None = None
