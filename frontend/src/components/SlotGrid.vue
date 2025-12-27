@@ -10,6 +10,7 @@ const props = defineProps({
 const emit = defineEmits(["select"]);
 
 const slots = ref([]);
+const selectedSlot = ref(null); // ✅ track selection
 const loading = ref(false);
 const error = ref("");
 
@@ -21,6 +22,7 @@ watch(
     loading.value = true;
     error.value = "";
     slots.value = [];
+    selectedSlot.value = null; // ✅ reset on change
 
     try {
       const res = await getSlots({
@@ -38,13 +40,18 @@ watch(
   },
   { immediate: true }
 );
+
+const selectSlot = (slot) => {
+  selectedSlot.value = slot;   // ✅ highlight
+  emit("select", slot);        // send to parent
+};
 </script>
 
 <template>
   <div class="section-block">
     <div v-if="loading">Loading slots...</div>
 
-    <div v-else-if="error" style="color: red">
+    <div v-else-if="error" class="error-text">
       {{ error }}
     </div>
 
@@ -56,8 +63,9 @@ watch(
       <button
         v-for="slot in slots"
         :key="slot.start"
-        @click="emit('select', slot)"
+        @click="selectSlot(slot)"
         class="slot-btn"
+        :class="{ selected: selectedSlot?.start === slot.start }"
       >
         {{ slot.start.slice(11, 16) }} → {{ slot.end.slice(11, 16) }}
       </button>
