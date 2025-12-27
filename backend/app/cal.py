@@ -1,7 +1,7 @@
 import os
 import requests
 from dotenv import load_dotenv
-
+from app.models import RescheduleRequest
 load_dotenv()
 
 # -------------------------------------------------------------------
@@ -123,27 +123,33 @@ def cancel_booking_on_cal(booking_uid: str):
     return res.json()
 
 
+
 def reschedule_booking_on_cal(
     booking_uid: str,
-    start: str,
-    reason: str | None = None,
+    payload: RescheduleRequest,
 ):
-    """
-    Reschedule an existing booking.
-    """
-    url = f"{BASE_URL}/bookings/{booking_uid}"
+    url = f"{BASE_URL}/bookings/{booking_uid}/reschedule"
 
     headers = {
         "Authorization": f"Bearer {CAL_API_KEY}",
         "Content-Type": "application/json",
-        "cal-api-version": "2024-06-11",
+        "cal-api-version": "2024-08-13",
     }
 
-    payload = {"start": start}
-    if reason:
-        payload["reschedulingReason"] = reason
+    data = {
+        "start": payload.start,
+    }
 
-    res = requests.patch(url, json=payload, headers=headers)
+    if payload.reschedulingReason:
+        data["reschedulingReason"] = payload.reschedulingReason
+
+    if payload.rescheduledBy:
+        data["rescheduledBy"] = payload.rescheduledBy
+
+    if payload.emailVerificationCode:
+        data["emailVerificationCode"] = payload.emailVerificationCode
+
+    res = requests.post(url, json=data, headers=headers)
 
     if res.status_code >= 400:
         raise RuntimeError(res.text)

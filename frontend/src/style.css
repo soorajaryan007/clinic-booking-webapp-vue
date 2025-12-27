@@ -215,3 +215,32 @@ select:focus {
     padding: 24px;
   }
 }
+
+/* =========================
+   Clickable buttons (OTP)
+========================= */
+
+.verify-btn,
+.confirm-btn {
+  cursor: pointer;               /* 👈 hand icon */
+  transition: 
+    background 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+/* Hover effect */
+.verify-btn:hover:not(:disabled),
+.confirm-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+}
+
+/* Disabled state */
+.verify-btn:disabled,
+.confirm-btn:disabled {
+  cursor: not-allowed;           /* 🚫 disabled cursor */
+  opacity: 0.6;
+  box-shadow: none;
+  transform: none;
+}

@@ -152,15 +152,19 @@ def book(req: BookingRequest):
 # Reschedule Booking
 # -------------------------------------------------
 @app.post("/reschedule-booking/{booking_uid}")
-def reschedule_booking(booking_uid: str, payload: RescheduleRequest):
+def reschedule_booking(
+    booking_uid: str,
+    payload: RescheduleRequest,
+):
+    cal_response = reschedule_booking_on_cal(
+        booking_uid=booking_uid,
+        payload=payload,
+    )
+
     return {
         "status": "success",
         "rescheduled": True,
-        "cal_response": reschedule_booking_on_cal(
-            booking_uid=booking_uid,
-            start=payload.start,
-            reason=payload.reschedulingReason,
-        ),
+        "cal_response": cal_response,
     }
 
 

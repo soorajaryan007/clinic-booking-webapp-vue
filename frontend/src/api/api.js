@@ -39,8 +39,22 @@ export const bookSlotAPI = (payload) =>
 export const cancelBookingAPI = (bookingUid) =>
   API.delete(`/cancel-booking/${bookingUid}`);
 
-export const rescheduleBookingAPI = (bookingUid, payload) =>
-  API.post(`/reschedule-booking/${bookingUid}`, payload);
+export const rescheduleBookingAPI = (
+  bookingUid,
+  {
+    start,
+    reschedulingReason,
+    rescheduledBy,
+    emailVerificationCode,
+  }
+) =>
+  API.post(`/reschedule-booking/${bookingUid}`, {
+    start,
+    reschedulingReason,
+    rescheduledBy,
+    emailVerificationCode,
+  });
+
 
 // =======================
 // EMAIL VERIFICATION APIs
