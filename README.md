@@ -293,3 +293,4 @@ frontend/node_modules/
 
 ---
 
+# clinic-booking-electron-app
